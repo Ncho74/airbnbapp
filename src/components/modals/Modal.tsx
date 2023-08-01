@@ -1,86 +1,74 @@
-"use client"
+"use client";
 
 import { useCallback, useEffect, useState } from "react";
-import {IoMdClose }from "react-icons/io"
+import { IoMdClose } from "react-icons/io";
 import Button from "../Button";
-interface ModalProps{
- isOpen:boolean;
- onClose:()=>void;
- onSubmit:()=>void;
- title?:string,
- body?:React.ReactElement
- footer?:React.ReactElement,
- header?:React.ReactElement,
- actionLabel:string;
- secondaryAction?:()=>void;
- disabled?:boolean;
- secondaryLabel?:string;
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: () => void;
+  title?: string;
+  body?: React.ReactElement;
+  footer?: React.ReactElement;
+  header?: React.ReactElement;
+  actionLabel: string;
+  secondaryAction?: () => void;
+  disabled?: boolean;
+  secondaryActionLabel?: string;
 }
-const Model:React.FC<ModalProps>=({
-   isOpen,
-    onClose,
-    onSubmit,
-    title,
-    body,header,
-    footer,
-    actionLabel,
-    disabled,
-    secondaryAction
-    ,secondaryLabel
-})=>{
+const Model: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  title,
+  body,
+  header,
+  footer,
+  actionLabel,
+  disabled,
+  secondaryAction,
+  secondaryActionLabel,
+}) => {
+  const [showModal, setShowModal] = useState(isOpen);
 
-    const [showModal,setShowModal]=useState(isOpen)
+  useEffect(() => {
+    setShowModal(isOpen);
+  }, [isOpen]);
 
-    useEffect(()=>{
+  const handleClose = useCallback(() => {
+    if (disabled) {
+      return;
+    }
 
- setShowModal(isOpen);
+    setShowModal(false);
 
-    },[isOpen])
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  }, [disabled, onClose]);
 
-    const handleClose=useCallback(()=>{
+  const handleSubmit = useCallback(() => {
+    if (disabled) {
+      return;
+    }
+    onSubmit();
+  }, [disabled, onSubmit]);
 
-        if(disabled){
-            return;
-        }
-
-        setShowModal(false);
-
-      setTimeout(()=>{
-
-        onClose();
-
-      },300)
-
-    },[disabled,onClose]);
-
-    const handleSubmit=useCallback(()=>{
-
-        if(disabled){
-
-            return ;
-        }
-        onSubmit()
-
-    },[disabled,onSubmit]);
-
-  const handleSecondaryAction=useCallback(()=>{
-
-    if(disabled || !secondaryAction){
-
-        return ;
+  const handleSecondaryAction = useCallback(() => {
+    if (disabled || !secondaryAction) {
+      return;
     }
     secondaryAction();
+  }, [disabled, secondaryAction]);
 
-  },[disabled,secondaryAction]);
-
-  if(!isOpen){
-
+  if (!isOpen) {
     return null;
   }
 
-    return (
+  return (
     <>
-    <div className="
+      <div
+        className="
     justify-center
     items-center
     flex
@@ -93,8 +81,10 @@ const Model:React.FC<ModalProps>=({
     focus:outline-none
     bg-neutral-800/30
 
-    ">
-      <div className="
+    "
+      >
+        <div
+          className="
       relative
       w-full
       md:w-4/6
@@ -106,21 +96,20 @@ const Model:React.FC<ModalProps>=({
       lg:h-auto
       md:h-auto
       
-      ">
-        {/* COntent */}
+      "
+        >
+          {/* COntent */}
 
-        <div
-        className={`translate
+          <div
+            className={`translate
         duration-300
         h-full
-        ${showModal?'translate-y-0':'translate-y-full'}
-        ${showModal?'opacity-100':'opacity-0'}
+        ${showModal ? "translate-y-0" : "translate-y-full"}
+        ${showModal ? "opacity-100" : "opacity-0"}
         `}
-        
-        
-        
-        >
-          <div className="
+          >
+            <div
+              className="
           translate
           h-full
           lg:h-auto
@@ -136,9 +125,11 @@ const Model:React.FC<ModalProps>=({
           outline-none
           focus:outline-none
 
-          ">
-            {/* HEADER */}
-            <div className="
+          "
+            >
+              {/* HEADER */}
+              <div
+                className="
             flex 
             items-center
             justify-center
@@ -146,9 +137,10 @@ const Model:React.FC<ModalProps>=({
             rounded-t
             border-b-[1px]
 
-            ">
-              <button
-              className="
+            "
+              >
+                <button
+                  className="
               p-1
               border-0
               hover:opacity-70
@@ -156,54 +148,61 @@ const Model:React.FC<ModalProps>=({
               absolute
               left-9
               "
-              >
-                <IoMdClose size={18} onClick={handleClose}/>
-              </button>
-              <div  className="
+                >
+                  <IoMdClose size={18} onClick={handleClose} />
+                </button>
+                <div
+                  className="
               text-lg
               font-semibold
-              ">
-                {title}
+              "
+                >
+                  {title}
+                </div>
               </div>
-
-            </div>
-            {/* BODY  */}
-            <div className="
+              {/* BODY  */}
+              <div
+                className="
             relative 
             p-6
              flex-auto
 
-            ">
-              {
-                body
-              }
-
-            </div>
-            {/* FOOTER */}
-             <div className=" flex flex-col gap-2 p-6">
-                <div className="
+            "
+              >
+                {body}
+              </div>
+              {/* FOOTER */}
+              <div className=" flex flex-col gap-2 p-6">
+                <div
+                  className="
                 flex
                 flex-row
                 items-center
                 gap-4
                 w-full
-                ">
-                  < Button onClick={()=>{}} label="button"  />
-
+                "
+                >
+                  {secondaryAction && secondaryActionLabel && (
+                    <Button
+                      outline
+                      onClick={handleSecondaryAction}
+                      disabled={disabled}
+                      label={secondaryActionLabel}
+                    />
+                  )}
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={disabled}
+                    label={actionLabel}
+                  />
                 </div>
-             </div>
-
+                {footer}
+              </div>
+            </div>
           </div>
-
         </div>
-
       </div>
-
-
-    </div>
     </>
-    );
-}
+  );
+};
 export default Model;
-
-
